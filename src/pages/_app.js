@@ -31,7 +31,7 @@ function LoginSignup() {
     )
 }
 
-function MyApp({ Component, pageProps}) {
+function MyApp({ Component, pageProps }) {
     return (
         <div className="container" style={{ display: 'flex', flexDirection: 'column'}}>
             <div style={{ display: 'flex', alignItems: 'center'}}>
@@ -54,7 +54,7 @@ function MyApp({ Component, pageProps}) {
                 <Component {...pageProps} />
             </div>
             <footer style={{ marginTop: '60px'}}>
-                Photoshop @2020
+                Photoshop @2021
             </footer>
         </div>
     )
