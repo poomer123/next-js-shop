@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { firebase } from "services/firebase";
 import 'styles/global.css'
 import Link from 'next/link'
 import Logo from 'compoments/Logo'
@@ -6,15 +7,16 @@ import { Dialog } from "@reach/dialog";
 import "@reach/dialog/styles.css";
 
 const login = ({ email, password }) => {
-    console.log(email, password)
+    return firebase.auth().signInWithEmailAndPassword(email, password)
 }
 
 const signup = ({ email, password }) => {
-    console.log(email, password)
+    return firebase.auth().createUserWithEmailAndPassword(email, password)
 }
 
 function LoginSignup() {
     const [open, setOpen] = useState('NO')
+    // const auth = userAuthState(firebase.auth())
     return (
         <div>
             <button onClick={() => setOpen('LOGIN')}>Login</button>
@@ -36,13 +38,17 @@ function LoginSignup() {
 }
 
 function Form({ buttonText, onSubmit }) {
-
+    const [error, setError] = useState(null)
     function handleSubmit(event) {
         event.preventDefault()
+        setError(null)
+
         const { email, password } = event.target.elements
         onSubmit({
             email: email.value,
             password: password.value
+        }).catch(err => {
+            setError(`Something wrong! ${err.message}`)
         })
     }
 
@@ -57,6 +63,7 @@ function Form({ buttonText, onSubmit }) {
                 <input type="text" id="password" />
             </div>
             <div>
+                <div style={{color: 'red'}}>{error ? error : null}</div>
                 <button type="submit">{buttonText}</button>
             </div>
         </form>
