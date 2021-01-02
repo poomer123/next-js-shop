@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useReducer, useEffect } from 'react'
 import { firebase } from "services/firebase";
 import 'styles/global.css'
 import Link from 'next/link'
@@ -14,9 +14,62 @@ const signup = ({ email, password }) => {
     return firebase.auth().createUserWithEmailAndPassword(email, password)
 }
 
+const logout = () => {
+    return firebase.auth().signOut()
+}
+
+function reducer(state, action) {
+    switch (action.type) {
+        case 'value':
+            return {
+                ...state,
+                value: action.value,
+                loading: false,
+                error: undefined
+            }
+        case 'error':
+            return {
+                ...state,
+                value: undefined,
+                loading: false,
+                error: action.error
+            }
+        default:
+            return state
+    }
+}
+
+function getInitialState(initValue) {
+    return {
+        loading: initValue === null,
+        value: initValue
+    }
+}
+
+function useAuthState(auth) {
+    const [state, dispatch] = useReducer(reducer, getInitialState(auth.currentUser))
+
+    useEffect(() => {
+        auth.onAuthStateChanged(
+            (v) => {dispatch({type: 'value', value: v})},
+            (e) => {dispatch({type: 'error', error: e})}
+        )
+    }, [auth])
+
+    return {
+        user: state.value,
+        loading: state.loading,
+        error: state.error,
+        isAuth: state.loading === false && state.value !== null
+    }
+}
+
 function LoginSignup() {
     const [open, setOpen] = useState('NO')
-    // const auth = userAuthState(firebase.auth())
+    const auth = useAuthState(firebase.auth())
+
+    if (auth.isAuth) return null;
+
     return (
         <div>
             <button onClick={() => setOpen('LOGIN')}>Login</button>
@@ -37,8 +90,22 @@ function LoginSignup() {
     )
 }
 
+function Logout() {
+
+    const auth = useAuthState(firebase.auth())
+
+    if (!auth.isAuth) return null;
+
+    return (
+        <div>
+            <button onClick={() => logout()}>Logout</button>
+        </div>
+    )
+}
+
 function Form({ buttonText, onSubmit }) {
     const [error, setError] = useState(null)
+
     function handleSubmit(event) {
         event.preventDefault()
         setError(null)
@@ -87,6 +154,7 @@ function MyApp({ Component, pageProps }) {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'row', marginLeft: 'auto'}}>
                     <LoginSignup />
+                    <Logout />
                 </div>
             </div>
             <div>
