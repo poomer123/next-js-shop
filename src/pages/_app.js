@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { firebase } from "services/firebase";
 import 'styles/global.css'
 import Link from 'next/link'
@@ -67,6 +67,13 @@ function Logout() {
 
 function Form({ buttonText, onSubmit }) {
     const [error, setError] = useState(null)
+    const inputRef = useRef(null)
+
+    useEffect(() => {
+        if (inputRef.current !== null) {
+            inputRef.current.focus()
+        }
+    }, [])
 
     function handleSubmit(event) {
         event.preventDefault()
@@ -85,7 +92,7 @@ function Form({ buttonText, onSubmit }) {
         <form onSubmit={handleSubmit}>
             <div>
                 <label htmlFor="email">Email</label>
-                <input type="text" id="email" />
+                <input type="text" id="email" ref={inputRef} />
             </div>
             <div>
                 <label htmlFor="password">Password</label>
