@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { firebase } from "services/firebase";
 import 'styles/global.css'
 import Link from 'next/link'
@@ -22,9 +22,15 @@ const logout = () => {
 
 function LoginSignup() {
     const [open, setOpen] = useState('NO')
-    const auth = useAuth()
+    const { isAuth } = useAuth()
 
-    if (auth.isAuth) return null;
+    useEffect(() => {
+        if (isAuth === false && open !== 'NO') {
+            setOpen('NO')
+        }
+    }, [isAuth])
+
+    if (isAuth) return null;
 
     return (
         <div>
