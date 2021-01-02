@@ -34,10 +34,12 @@ function useAuthState(auth) {
     const [state, dispatch] = useReducer(reducer, getInitialState(auth.currentUser))
 
     useEffect(() => {
-        auth.onAuthStateChanged(
+        const unsubscribe = auth.onAuthStateChanged(
             (v) => {dispatch({type: 'value', value: v})},
             (e) => {dispatch({type: 'error', error: e})}
         )
+
+        return () => unsubscribe()
     }, [auth])
 
     return {
