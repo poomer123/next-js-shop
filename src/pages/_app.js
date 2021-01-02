@@ -106,6 +106,17 @@ function Form({ buttonText, onSubmit }) {
     )
 }
 
+function UserMenu() {
+    const { loading } = useAuth()
+
+    if (loading) return <div>Loading..</div>
+
+    return <>
+        <LoginSignup />
+        <Logout />
+    </>
+}
+
 function MyApp({ Component, pageProps }) {
     return (
         <AuthContextProvider>
@@ -123,8 +134,7 @@ function MyApp({ Component, pageProps }) {
                         </Link>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'row', marginLeft: 'auto'}}>
-                        <LoginSignup />
-                        <Logout />
+                        <UserMenu />
                     </div>
                 </div>
                 <div>
