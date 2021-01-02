@@ -1,10 +1,12 @@
-import { useState, useReducer, useEffect } from 'react'
+import { useState } from 'react'
 import { firebase } from "services/firebase";
 import 'styles/global.css'
 import Link from 'next/link'
 import Logo from 'compoments/Logo'
-import { Dialog } from "@reach/dialog";
-import "@reach/dialog/styles.css";
+import { Dialog } from "@reach/dialog"
+import "@reach/dialog/styles.css"
+import { AuthContextProvider, useAuth } from '../context/AuthContext'
+
 
 const login = ({ email, password }) => {
     return firebase.auth().signInWithEmailAndPassword(email, password)
@@ -18,55 +20,9 @@ const logout = () => {
     return firebase.auth().signOut()
 }
 
-function reducer(state, action) {
-    switch (action.type) {
-        case 'value':
-            return {
-                ...state,
-                value: action.value,
-                loading: false,
-                error: undefined
-            }
-        case 'error':
-            return {
-                ...state,
-                value: undefined,
-                loading: false,
-                error: action.error
-            }
-        default:
-            return state
-    }
-}
-
-function getInitialState(initValue) {
-    return {
-        loading: initValue === null,
-        value: initValue
-    }
-}
-
-function useAuthState(auth) {
-    const [state, dispatch] = useReducer(reducer, getInitialState(auth.currentUser))
-
-    useEffect(() => {
-        auth.onAuthStateChanged(
-            (v) => {dispatch({type: 'value', value: v})},
-            (e) => {dispatch({type: 'error', error: e})}
-        )
-    }, [auth])
-
-    return {
-        user: state.value,
-        loading: state.loading,
-        error: state.error,
-        isAuth: state.loading === false && state.value !== null
-    }
-}
-
 function LoginSignup() {
     const [open, setOpen] = useState('NO')
-    const auth = useAuthState(firebase.auth())
+    const auth = useAuth()
 
     if (auth.isAuth) return null;
 
@@ -92,7 +48,7 @@ function LoginSignup() {
 
 function Logout() {
 
-    const auth = useAuthState(firebase.auth())
+    const auth = useAuth()
 
     if (!auth.isAuth) return null;
 
@@ -139,31 +95,33 @@ function Form({ buttonText, onSubmit }) {
 
 function MyApp({ Component, pageProps }) {
     return (
-        <div className="container" style={{ display: 'flex', flexDirection: 'column'}}>
-            <div style={{ display: 'flex', alignItems: 'center'}}>
+        <AuthContextProvider>
+            <div className="container" style={{ display: 'flex', flexDirection: 'column'}}>
+                <div style={{ display: 'flex', alignItems: 'center'}}>
+                    <div>
+                        <Logo />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', marginLeft: 6}}>
+                        <Link href="/">
+                            <a style={{ padding: '6px 4px' }}>Home</a>
+                        </Link>
+                        <Link href="/about">
+                            <a style={{ padding: '6px 4px' }}>About</a>
+                        </Link>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', marginLeft: 'auto'}}>
+                        <LoginSignup />
+                        <Logout />
+                    </div>
+                </div>
                 <div>
-                    <Logo />
+                    <Component {...pageProps} />
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'row', marginLeft: 6}}>
-                    <Link href="/">
-                        <a style={{ padding: '6px 4px' }}>Home</a>
-                    </Link>
-                    <Link href="/about">
-                        <a style={{ padding: '6px 4px' }}>About</a>
-                    </Link>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'row', marginLeft: 'auto'}}>
-                    <LoginSignup />
-                    <Logout />
-                </div>
+                <footer style={{ marginTop: '60px'}}>
+                    Photoshop @2021
+                </footer>
             </div>
-            <div>
-                <Component {...pageProps} />
-            </div>
-            <footer style={{ marginTop: '60px'}}>
-                Photoshop @2021
-            </footer>
-        </div>
+        </AuthContextProvider>
     )
 }
 
