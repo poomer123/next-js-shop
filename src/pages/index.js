@@ -59,9 +59,11 @@ function useCollection(query) {
     return {
         data: state.value 
             ? state.value.docs.map( e => {
+                const d = e.data()
                 return {
                     id: e.id,
-                    ...e.data(),
+                    ...d,
+                    created_at: d.created_at.toDate().toLocaleDateString()
                 }
             })
             : null,
@@ -69,6 +71,24 @@ function useCollection(query) {
         error: state.error,
         empty: state.value ? state.value.empty : null
     }
+}
+
+function Products({ data }) {
+    return <div style={{ display: 'flex', flexWrap: 'wrap'}}>
+        {data && data.map(e => {
+            return (
+                <div key={e.id} style={{flexBasis: '24%', paddingLeft: '.5%', paddingRight: '.5%', marginBottom: 24 }}>
+                    <div style={{ width: '100%'}}>
+                        <img src={e.url} alt={e.title} style={{ width: '100%'}} />
+                    </div>
+                    <h3 style={{ fontSize: 14, marginTop: 4, marginBottom: 4}}>
+                        {e.title}
+                    </h3>
+                    <small>{e.created_at}</small>
+                </div>
+            )
+        })}
+    </div>
 }
 
 function Home() {
@@ -87,15 +107,8 @@ function Home() {
     }
 
     return <div>
-        <h1>Home Page</h1>
-        {data && data.map(e => {
-            return (
-                <div key={e.id}>
-                    <img src={e.url} alt={e.title} />
-                    <h3>{e.title}</h3>
-                </div>
-            )
-        })}
+        <h1>Our products</h1>
+        <Products data={data} />
     </div>
 }
 
