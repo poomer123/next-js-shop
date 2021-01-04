@@ -112,7 +112,11 @@ function Cart() {
     if (!isAuth) return null
     return (
         <div style={{padding: '0 4px'}}>
-            Cart ({items.length})
+            <Link href="/cart">
+                <a>
+                    Cart ({items.length})
+                </a>
+            </Link>
         </div>
     )
 }
