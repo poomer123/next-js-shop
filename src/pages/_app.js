@@ -6,7 +6,7 @@ import Logo from 'compoments/Logo'
 import { Dialog } from "@reach/dialog"
 import "@reach/dialog/styles.css"
 import { AuthContextProvider, useAuth } from '../context/AuthContext'
-
+import { CartContextProvider, useCart } from '../context/CartContext'
 
 const login = ({ email, password }) => {
     return firebase.auth().signInWithEmailAndPassword(email, password)
@@ -106,6 +106,17 @@ function Form({ buttonText, onSubmit }) {
     )
 }
 
+function Cart() {
+    const { isAuth } = useAuth()
+    const { items } = useCart()
+    if (!isAuth) return null
+    return (
+        <div style={{padding: '0 4px'}}>
+            Cart ({items.length})
+        </div>
+    )
+}
+
 function UserMenu() {
     const { loading } = useAuth()
 
@@ -114,36 +125,39 @@ function UserMenu() {
     return <>
         <LoginSignup />
         <Logout />
+        <Cart />
     </>
 }
 
 function MyApp({ Component, pageProps }) {
     return (
         <AuthContextProvider>
-            <div className="container" style={{ display: 'flex', flexDirection: 'column'}}>
-                <div style={{ display: 'flex', alignItems: 'center'}}>
+            <CartContextProvider>
+                <div className="container" style={{ display: 'flex', flexDirection: 'column'}}>
+                    <div style={{ display: 'flex', alignItems: 'center'}}>
+                        <div>
+                            <Logo />
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'row', marginLeft: 6}}>
+                            <Link href="/">
+                                <a style={{ padding: '6px 4px' }}>Home</a>
+                            </Link>
+                            <Link href="/about">
+                                <a style={{ padding: '6px 4px' }}>About</a>
+                            </Link>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'row', marginLeft: 'auto'}}>
+                            <UserMenu />
+                        </div>
+                    </div>
                     <div>
-                        <Logo />
+                        <Component {...pageProps} />
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', marginLeft: 6}}>
-                        <Link href="/">
-                            <a style={{ padding: '6px 4px' }}>Home</a>
-                        </Link>
-                        <Link href="/about">
-                            <a style={{ padding: '6px 4px' }}>About</a>
-                        </Link>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', marginLeft: 'auto'}}>
-                        <UserMenu />
-                    </div>
+                    <footer style={{ marginTop: '60px'}}>
+                        Photoshop @2021
+                    </footer>
                 </div>
-                <div>
-                    <Component {...pageProps} />
-                </div>
-                <footer style={{ marginTop: '60px'}}>
-                    Photoshop @2021
-                </footer>
-            </div>
+            </CartContextProvider>
         </AuthContextProvider>
     )
 }
