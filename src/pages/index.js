@@ -1,5 +1,6 @@
 import { useRef, useEffect, useReducer } from 'react';
 import { db } from 'services/firebase';
+import Link from 'next/link';
 
 // const photosRef = db.collection('photos')
 
@@ -7,6 +8,7 @@ import { db } from 'services/firebase';
 //     title: 'Lens',
 //     owner: 'Markus Spiske',
 //     url: 'https://source.unsplash.com/zssAC1KCzNs',
+//     description: 'ก็ยังมีความสดใสเหมือนว่ายังไง',
 //     created_at: firebase.firestore.Timestamp.fromDate(new Date())
 // })
 
@@ -33,7 +35,7 @@ function reducer(state, action) {
 
 function getInitialState(initValue) {
     return {
-        loading: initValue === null,
+        loading: initValue === null || initValue === undefined,
         value: initValue
     }
 }
@@ -78,13 +80,17 @@ function Products({ data }) {
         {data && data.map(e => {
             return (
                 <div key={e.id} style={{flexBasis: '24%', paddingLeft: '.5%', paddingRight: '.5%', marginBottom: 24 }}>
-                    <div style={{ width: '100%'}}>
-                        <img src={e.url} alt={e.title} style={{ width: '100%'}} />
-                    </div>
-                    <h3 style={{ fontSize: 14, marginTop: 4, marginBottom: 4}}>
-                        {e.title}
-                    </h3>
-                    <small>{e.created_at}</small>
+                    <Link href='/products/[productId]' as={`/products/${e.id}`} >
+                        <a>
+                            <div style={{ width: '100%'}}>
+                                <img src={e.url} alt={e.title} style={{ width: '100%'}} />
+                            </div>
+                            <h3 style={{ fontSize: 14, marginTop: 4, marginBottom: 4}}>
+                                {e.title}
+                            </h3>
+                            <small>{e.created_at}</small>
+                        </a>
+                    </Link>
                 </div>
             )
         })}
