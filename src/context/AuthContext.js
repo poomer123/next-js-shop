@@ -25,7 +25,7 @@ function reducer(state, action) {
 
 function getInitialState(initValue) {
     return {
-        loading: initValue === null,
+        loading: initValue === null || initValue === undefined,
         value: initValue
     }
 }
