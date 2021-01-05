@@ -1,49 +1,11 @@
-import { useRef, useEffect, useReducer } from 'react';
 import { db } from 'services/firebase';
-import { useRouter } from 'next/router';
 import { useAuth } from 'context/AuthContext'
 import { useCart } from 'context/CartContext'
 
 
-function useDocument(query, docId) {
-    const ref = useRef(query)
-    const [state, dispatch] = useReducer(reducer, getInitialState())
-
-    useEffect(() => {
-        if (ref.current === null) {
-            dispatch({ type: 'value', value: null })
-            return
-        }
-        if (docId) {
-            ref.current.doc(docId).get()
-            .then( snapshot => 
-                dispatch({ type: 'value', value: snapshot })
-            )
-            .catch( err => 
-                dispatch({ type: 'error', error: err }) 
-            )
-        }
-    }, [docId])
-
-    return {
-        data: state.value 
-            ? {
-                ...state.value.data(),
-                id: state.value.id,
-                created_at: state.value.get('created_at').toDate().toLocaleDateString()
-            }
-            : null,
-        loading: state.loading,
-        error: state.error,
-        empty: state.value ? state.value.empty : null
-    }
-}
-
 function ProductDatil({ data }) {
-    const router = useRouter()
     const { isAuth } = useAuth()
     const { items, dispatch } = useCart()
-    // const { productId } = router.query
 
     const isInCart = items.some(e => e.id === data.id)
     return (
