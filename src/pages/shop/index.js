@@ -6,7 +6,7 @@ function Products({ data }) {
         {data && data.map(e => {
             return (
                 <div key={e.id} style={{flexBasis: '24%', paddingLeft: '.5%', paddingRight: '.5%', marginBottom: 24 }}>
-                    <Link href='/shop/[productId]' as={`/products/${e.id}`} >
+                    <Link href='/shop/[productId]' as={`/shop/${e.id}`} >
                         <a>
                             <div style={{ width: '100%'}}>
                                 <img src={e.url} alt={e.title} style={{ width: '100%'}} />
@@ -50,6 +50,6 @@ export async function getStaticProps(context) {
     return {
         props: {data},
     }
-  }
+}
 
 export default Shop
