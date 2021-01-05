@@ -1,11 +1,17 @@
 import { db } from 'services/firebase';
+import { useRouter } from 'next/router';
 import { useAuth } from 'context/AuthContext'
 import { useCart } from 'context/CartContext'
 
 
 function ProductDatil({ data }) {
+    const router = useRouter()
     const { isAuth } = useAuth()
     const { items, dispatch } = useCart()
+
+    if (router.isFallback) {
+        return <div>Loading..</div>
+    }
 
     const isInCart = items.some(e => e.id === data.id)
     return (
@@ -30,7 +36,7 @@ function ProductDatil({ data }) {
 export async function getStaticPaths() {
     let snapshot = null
     try {
-        snapshot = await db.collection('photos').orderBy('created_at').limit(16).get()
+        snapshot = await db.collection('photos').orderBy('created_at').limit(10).get()
     } catch (error) {
         console.log(error)
     }
@@ -45,7 +51,7 @@ export async function getStaticPaths() {
 
     return {
         paths,
-        fallback: false
+        fallback: true
     }
 }
 
