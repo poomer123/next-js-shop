@@ -146,6 +146,9 @@ function MyApp({ Component, pageProps }) {
                             <Link href="/">
                                 <a style={{ padding: '6px 4px' }}>Home</a>
                             </Link>
+                            <Link href="/shop">
+                                <a style={{ padding: '6px 4px' }}>Shop</a>
+                            </Link>
                             <Link href="/about">
                                 <a style={{ padding: '6px 4px' }}>About</a>
                             </Link>
